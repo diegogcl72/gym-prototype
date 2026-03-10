@@ -68,11 +68,10 @@ const Logo=({s=56})=><svg width={s} height={s*0.75} viewBox="0 0 140 100" fill="
 // ============================================================
 // SHARED
 // ============================================================
-const SBar=()=><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 28px 0",fontSize:15,fontWeight:600,color:"#fff"}}><span>9:41</span><div style={{width:125,height:34,background:"#000",borderRadius:20,position:"absolute",top:8,left:"50%",transform:"translateX(-50%)"}}/><div style={{display:"flex",gap:5,alignItems:"center"}}><svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="7" width="3" height="5" rx="1" fill="#fff"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1" fill="#fff"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#fff"/></svg><svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#fff" strokeOpacity="0.35"/><rect x="2" y="2" width="19" height="9" rx="2" fill="#c8ff00"/><rect x="24" y="4" width="2.5" height="5" rx="1.25" fill="#fff" fillOpacity="0.4"/></svg></div></div>;
 
 const BNav=({active,onNav,admin=false})=>{
   const items=admin?[{k:"a-home",i:I.home},{k:"a-schedule",i:I.cal},{k:"a-users",i:I.user},{k:"a-payments",i:I.euro},{k:"a-plans",i:I.chart}]:[{k:"home",i:I.home},{k:"reservations",i:I.cal},{k:"notifications",i:I.bell},{k:"profile",i:I.user}];
-  return <div style={{position:"absolute",bottom:20,left:"50%",transform:"translateX(-50%)",background:"#1a1a1a",borderRadius:28,padding:"12px 20px",display:"flex",gap:admin?18:24,alignItems:"center",border:"1px solid #252525"}}>{items.map(it=><div key={it.k} onClick={()=>onNav(it.k)} style={{cursor:"pointer",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>{it.i(active===it.k?"#c8ff00":"#555")}{active===it.k&&<div style={{position:"absolute",top:-8,width:4,height:4,borderRadius:"50%",background:"#c8ff00"}}/>}</div>)}</div>;
+  return <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,padding:"0 16px 24px",paddingBottom:"max(24px, env(safe-area-inset-bottom))",background:"linear-gradient(transparent, #111 30%)",display:"flex",justifyContent:"center"}}><div style={{background:"#1a1a1a",borderRadius:28,padding:"12px 20px",display:"flex",gap:admin?18:24,alignItems:"center",border:"1px solid #252525"}}>{items.map(it=><div key={it.k} onClick={()=>onNav(it.k)} style={{cursor:"pointer",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>{it.i(active===it.k?"#c8ff00":"#555")}{active===it.k&&<div style={{position:"absolute",top:-8,width:4,height:4,borderRadius:"50%",background:"#c8ff00"}}/>}</div>)}</div></div>;
 };
 
 const Pill=({l,a,onClick,c="#c8ff00"})=><button onClick={onClick} style={{padding:"7px 14px",borderRadius:20,border:`1.5px solid ${a?c:"#2a2a2a"}`,background:a?c+"18":"transparent",color:a?c:"#666",fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap",transition:"all .2s",fontFamily:"inherit"}}>{l}</button>;
@@ -85,13 +84,23 @@ const Header=({left,title,right})=><div style={{padding:"20px 20px 0",display:"f
 // ============================================================
 const Login=({onLogin})=>{
   const [loading,setLoading]=useState(false);
-  const go=()=>{setLoading(true);setTimeout(()=>{setLoading(false);onLogin();},800);};
-  return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"space-between",height:"100%",padding:"0 28px 40px"}}>
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",width:"100%",marginTop:50}}>
+  const [role,setRole]=useState("user");
+  const go=()=>{setLoading(true);setTimeout(()=>{setLoading(false);onLogin(role);},800);};
+  return <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"space-between",height:"100%",padding:"60px 28px 40px"}}>
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",width:"100%"}}>
       <div style={{width:100,height:100,borderRadius:"50%",background:"#161616",border:"2px solid #2a2a2a",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:22,position:"relative",overflow:"hidden"}}><div style={{position:"absolute",width:60,height:60,borderRadius:"50%",background:"radial-gradient(circle,rgba(200,255,0,.08) 0%,transparent 70%)",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}/><Logo s={56}/></div>
       <div style={{fontSize:11,fontWeight:600,color:"#c8ff00",letterSpacing:5,textTransform:"uppercase",marginBottom:4}}>Center</div>
       <div style={{fontSize:24,fontWeight:800,color:"#fff",letterSpacing:".5px",marginBottom:6}}>Athlete Center</div>
-      <div style={{fontSize:13,color:"#555",fontWeight:500,marginBottom:44}}>Tu entreno, tu ritmo</div>
+      <div style={{fontSize:13,color:"#555",fontWeight:500,marginBottom:32}}>Tu entreno, tu ritmo</div>
+      {/* Role selector */}
+      <div style={{display:"flex",gap:0,marginBottom:28,background:"#161616",borderRadius:14,padding:4,width:"100%"}}>
+        <button onClick={()=>setRole("user")} style={{flex:1,padding:"12px 0",borderRadius:12,border:"none",background:role==="user"?"#c8ff00":"transparent",color:role==="user"?"#111":"#666",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .25s"}}>
+          Alumno
+        </button>
+        <button onClick={()=>setRole("admin")} style={{flex:1,padding:"12px 0",borderRadius:12,border:"none",background:role==="admin"?"#c8ff00":"transparent",color:role==="admin"?"#111":"#666",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",transition:"all .25s"}}>
+          Administrador
+        </button>
+      </div>
       <div style={{width:"100%",display:"flex",flexDirection:"column",gap:12}}>
         <div style={{background:"#161616",borderRadius:14,padding:"0 16px",display:"flex",alignItems:"center",gap:12,height:54,border:"1.5px solid #222"}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><polyline points="22,4 12,13 2,4"/></svg><input placeholder="Email" style={{background:"transparent",border:"none",outline:"none",color:"#fff",fontSize:15,fontWeight:500,width:"100%",fontFamily:"inherit"}}/></div>
         <div style={{background:"#161616",borderRadius:14,padding:"0 16px",display:"flex",alignItems:"center",gap:12,height:54,border:"1.5px solid #222"}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="3"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" placeholder="Contraseña" style={{background:"transparent",border:"none",outline:"none",color:"#fff",fontSize:15,fontWeight:500,width:"100%",fontFamily:"inherit"}}/></div>
@@ -351,9 +360,17 @@ export default function GymApp(){
   const nav=s=>setScreen(s);
   const admin=["a-home","a-schedule","a-users","a-payments","a-plans"].includes(screen);
 
+  const handleLogin = (role) => {
+    if (role === "admin") {
+      nav("a-home");
+    } else {
+      nav("home");
+    }
+  };
+
   const getScreen = () => {
     switch (screen) {
-      case "login": return <Login onLogin={() => nav("home")} />;
+      case "login": return <Login onLogin={handleLogin} />;
       case "home": return <Home nav={nav} cls={cls} />;
       case "reservations": return <Reservations cls={cls} setCls={setCls} />;
       case "profile": return <Profile onBack={() => nav("home")} />;
@@ -370,19 +387,28 @@ export default function GymApp(){
   const currentScreen = getScreen();
 
   return (
-    <div style={{background:"#0a0a0a",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif",padding:20,gap:16}}>
-      {screen !== "login" && (
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={() => setScreen("home")} style={{padding:"8px 20px",borderRadius:12,border:"none",background:!admin?"#c8ff00":"#1a1a1a",color:!admin?"#111":"#666",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Usuario</button>
-          <button onClick={() => setScreen("a-home")} style={{padding:"8px 20px",borderRadius:12,border:"none",background:admin?"#c8ff00":"#1a1a1a",color:admin?"#111":"#666",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Admin</button>
-        </div>
-      )}
-      <div style={{width:393,height:852,background:"#111",borderRadius:44,overflow:"hidden",position:"relative",boxShadow:"0 0 60px rgba(200,255,0,.04),0 25px 80px rgba(0,0,0,.5)",border:"6px solid #1a1a1a"}}>
-        <SBar />
-        <div style={{height:"calc(100% - 48px)"}}>{currentScreen}</div>
+    <div style={{
+      background:"#111",
+      minHeight:"100vh",
+      maxWidth:480,
+      margin:"0 auto",
+      position:"relative",
+      fontFamily:"'SF Pro Display',-apple-system,BlinkMacSystemFont,sans-serif",
+      overflow:"hidden",
+    }}>
+      <div style={{height:"100vh",position:"relative"}}>
+        {currentScreen}
         {screen !== "login" && <BNav active={screen} onNav={nav} admin={admin} />}
       </div>
-      <style>{`*{-ms-overflow-style:none;scrollbar-width:none;}*::-webkit-scrollbar{display:none;}@keyframes spin{to{transform:rotate(360deg);}}input::placeholder{color:#444;}`}</style>
+      <style>{`
+        * { -ms-overflow-style:none; scrollbar-width:none; margin:0; padding:0; box-sizing:border-box; }
+        *::-webkit-scrollbar { display:none; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        input::placeholder { color:#444 !important; }
+        html, body { background:#111; overflow:hidden; }
+        html { height: -webkit-fill-available; }
+        body { min-height: 100vh; min-height: -webkit-fill-available; }
+      `}</style>
     </div>
   );
 }
